@@ -1,0 +1,3 @@
+[submodule "report/class"]
+	path = report/class
+	url = git@github.com:TOR-/TOR-eng-report-template.git
