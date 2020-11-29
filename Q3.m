@@ -39,29 +39,31 @@ sicl.SettlingTime;
 pole(Gcl);
 
 %% ONCE MORE, BUT WITH OBSERVER
-L = place(A',C',[-100 -101])'
-% Observer gain, poles hereby produced much be negative enough 
+L = place(A',C',[-21 -22])';
+% Observer gain, poles hereby produced must be negative enough 
 % that the estimation error converges to zero rapidly
-L_chosen = [64 -9]';
+L_chosen = [2 -0.3]';
 Acl = [A-(B*K_chosen) B*K_chosen; zeros(size(A)) A-(L_chosen*C)];
 Bcl = NB*[B;zeros(length(A),1)];
 Ccl = [C zeros(1,length(A))];
 Dcl = D;
 Gcl_observer = ss(Acl, Bcl, Ccl, Dcl);
 siclo = stepinfo(Gcl_observer);
-siclo.SettlingTime
-siclo.Overshoot
-%step(Gcl_observer)
-%print('report/img/p3-step_observer','-dpng');
-
+siclo.SettlingTime;
+siclo.Peak;
+step(Gcl_observer)
+title("Step response of closed loop system with observer")
+print('report/img/p3-step_observer','-dpng');
+close all
 %% SENSITIVITY
 factors=0.9:0.05:1.1;
-%factors=0.2:0.05:1.8;
+%factors=0.2:0.3:1.8;
 ak=a;
 bk=b;
 ck=c;
 ts = zeros(length(factors)^3,1);
 pk = zeros(length(factors)^3,1);
+ov = zeros(length(factors)^3,1);
 idx = 1;
 for af=factors
     a=ak*af;
@@ -84,6 +86,7 @@ for af=factors
             %fprintf(1, "%f & %f & %f & %f & %f & %f\n", a, b, c, siclo.SettlingTime, sicl.SettlingTime, siclo.Peak);
             ts(idx) = siclo.SettlingTime;
             pk(idx) = siclo.Peak;
+            ov(idx) = siclo.Undershoot;
             idx = idx+1;
         end
     end
@@ -91,5 +94,15 @@ end
 a = ak;
 b = bk;
 c = ck;
-plot(abs(pk-1),'.')
+plot(abs(pk-1),'.');
+yline(0);
+title("Steady-state error")
+xlim([1 length(pk)])
+%print('report/img/p3-sse_error','-dpng');
+
 plot((ts-t_s_max)/t_s_max,'o')
+yline(0);
+title("Settling time relative error")
+ylabel("Error [%]")
+xlim([1 length(ts)])
+%print('report/img/p3-ts_rel_err','-dpng');
