@@ -21,17 +21,17 @@ sse_target = 0.04;
 dc_gain_min = dB(1/sse_target -1);
 d_dc_gain = dc_gain - dc_gain_min;
 
-%% PO & CHI
+%% PO & zeta
 PO_target = 25;
-PO  = @(chi) 100*exp(-pi*chi./sqrt(1-chi.^2));
-prosp_chi = 0.3:1e-5:0.8;
-[md, mi] = min(abs(PO(prosp_chi)-PO_target));
-chi = prosp_chi(mi);
-chi_chosen = 0.45;
+PO  = @(zeta) 100*exp(-pi*zeta./sqrt(1-zeta.^2));
+prosp_zeta = 0.3:1e-5:0.8;
+[md, mi] = min(abs(PO(prosp_zeta)-PO_target));
+zeta = prosp_zeta(mi);
+zeta_chosen = 0.45;
 %% TS 2%
 TS_target = 1;
-o_n = 4/(chi_chosen*TS_target);
-o_gc = o_n*sqrt(sqrt(1+4*chi_chosen^4)-2*chi_chosen^2);
+o_n = 4/(zeta_chosen*TS_target);
+o_gc = o_n*sqrt(sqrt(1+4*zeta_chosen^4)-2*zeta_chosen^2);
 o_gc_chosen = 8;%o_gc;
 %% CONTROLLER alpha AND tau
 % reduce plant with gain
